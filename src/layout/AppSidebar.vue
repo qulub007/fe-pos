@@ -24,6 +24,12 @@ const menuItems = ref([
         items: [
             { icon: "pi pi-th-large", to: "/", label: "Dashboard" }
         ]
+    },
+    {
+        label: "Management",
+        items: [
+            { icon: "pi pi-tag", to: "/product-categories", label: "Product Categories" }
+        ]
     }
 ])
 </script>
@@ -45,7 +51,7 @@ const menuItems = ref([
                 <div class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3 px-3">
                     {{ section.label }}
                 </div>
-                <div class="flex flex-col gap-1">
+                <div class="flex flex-col gap-1 mb-3">
                     <router-link v-for="(item, j) in section.items" :to="item.to" :key="index"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200"
                         :class="[route.path == item.to ? 'bg-surface-100 text-primary-600' : 'text-surface-900 hover:bg-surface-100']">
