@@ -2,11 +2,11 @@
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth.store';
 import { Button, Dialog } from 'primevue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const authStore = useAuthStore();
-const { user } = authStore;
+// Hapus baris 'const { user } = authStore;' agar reactivity state tidak terputus
 
 const logoutDialog = ref(false);
 
@@ -22,20 +22,32 @@ const menuItems = ref([
     {
         label: "General",
         items: [
-            { icon: "pi pi-th-large", to: "/", label: "Dashboard" }
+            { icon: "pi pi-th-large", to: "/", label: "Dashboard", permission: "menu_dashboard" },
+            { icon: "pi pi-receipt", to: "/pos", label: "POS", permission: "menu_pos" }
         ]
     },
     {
         label: "Management",
         items: [
-            { icon: "pi pi-tag", to: "/product-categories", label: "Product Categories" },
-            { icon: "pi pi-box", to: "/products", label: "Products" },
-            { icon: "pi pi-users", to: "/customers", label: "Customers" },
-            { icon: "pi pi-shopping-cart", to: "/transactions", label: "Transactions" }
+            { icon: "pi pi-tag", to: "/product-categories", label: "Product Categories", permission: "menu_product_categories" },
+            { icon: "pi pi-box", to: "/products", label: "Products", permission: "menu_products" },
+            { icon: "pi pi-users", to: "/customers", label: "Customers", permission: "menu_customers" },
+            { icon: "pi pi-shopping-cart", to: "/transactions", label: "Transactions", permission: "menu_transactions" }
         ]
     }
 ])
+
+const filteredMenuItems = computed(() => {
+    return menuItems.value.map(section => ({
+        ...section,
+        items: section.items.filter((item) => {
+            if (!item.permission) return true
+            return authStore.hasPermission(item.permission)
+        }),
+    })).filter((section) => section.items.length > 0)
+})
 </script>
+
 <template>
     <div
         class="fixed left-0 top-0 h-full w-64 bg-white border-r border-surface-200 flex flex-col z-50 transition-all duration-300">
@@ -50,12 +62,12 @@ const menuItems = ref([
 
         <!-- menu -->
         <div class="flex-1 overflow-y-auto py-6 px-4 flex-col gap-6">
-            <div v-for="(section, i) in menuItems" :key="i">
+            <div v-for="(section, i) in filteredMenuItems" :key="i">
                 <div class="text-xs font-semibold text-surface-400 uppercase tracking-wider mb-3 px-3">
                     {{ section.label }}
                 </div>
                 <div class="flex flex-col gap-1 mb-3">
-                    <router-link v-for="(item, j) in section.items" :to="item.to" :key="index"
+                    <router-link v-for="(item, j) in section.items" :to="item.to" :key="j"
                         class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200"
                         :class="[route.path == item.to ? 'bg-surface-100 text-primary-600' : 'text-surface-900 hover:bg-surface-100']">
                         <i :class="[item.icon, 'text-lg']"></i>
@@ -73,11 +85,12 @@ const menuItems = ref([
                     <i class="pi pi-user text-lg text-surface-600"></i>
                 </div>
                 <div class="text-left min-w-0 flex-1">
+                    <!-- PERBAIKAN: Panggil authStore.user agar data profil reaktif -->
                     <div class="text-sm font-semibold text-surface-900 ">
-                        {{ user?.name }}
+                        {{ authStore.user?.name }}
                     </div>
                     <div class="text-xs text-surface-500 ">
-                        {{ user?.email }}
+                        {{ authStore.user?.email }}
                     </div>
                 </div>
                 <div

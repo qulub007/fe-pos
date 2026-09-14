@@ -7,6 +7,13 @@ export const getProducts = (params?: {
   product_category_id?: number | null;
 }) => api.get("/products", { params });
 
+export const getProductsOptions = (params?: {
+  search?: string;
+  limit?: number;
+  product_category_id?: number | null;
+}) => api.get("/products/options", { params });
+
+
 export const getProduct = (id: number) => api.get(`/products/${id}`);
 
 export const createProduct = (payload: {

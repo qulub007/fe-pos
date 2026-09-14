@@ -6,6 +6,9 @@ import { onMounted } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { deleteCategory } from '@/api/product-categories.api';
 import { RouterLink } from 'vue-router';
+import { usePermission } from '@/composables/usePermission';
+
+const { can } = usePermission()
 
 const productCategoryStore = useProductCategoryStore();
 const { fetch, setLimit, setPage, nextPage, prevPage } = productCategoryStore;
@@ -69,7 +72,7 @@ onMounted(() => {
                 </p>
             </div>
 
-            <Button asChild v-slot="slotProps">
+            <Button asChild v-slot="slotProps" v-if="can('create_product_categories')">
                 <RouterLink :to="{ name: 'product-categories-create' }" :class="slotProps.class">
                     Add Category
                 </RouterLink>
@@ -102,7 +105,8 @@ onMounted(() => {
                 <Column header="Action" style="width: 5rem;">
                     <template #body="{ data }">
                         <div class="flex items-center gap-2">
-                            <RouterLink :to="{ name: 'product-categories-edit', params: { id: data.id } }">
+                            <RouterLink :to="{ name: 'product-categories-edit', params: { id: data.id } }"
+                                v-if="can('edit_product_categories')">
                                 <Button icon="pi pi-pencil" text rounded severity="primary"
                                     class="w-9! h-9! border-surface-200! text-surface-200! hover:text-primary-600! hover:border-primary-500 hover:bg-primary-50! bg-white"
                                     @click="confirmDelete(data.id)" />
@@ -110,7 +114,7 @@ onMounted(() => {
 
                             <Button icon="pi pi-trash" text rounded severity="danger"
                                 class="w-9! h-9! border-surface-200! text-surface-200! hover:text-primary-600! hover:border-primary-500 hover:bg-primary-50! bg-white"
-                                @click="confirmDelete(data.id)" />
+                                @click="confirmDelete(data.id)" v-if="can('delete_product_categories')" />
                         </div>
                     </template>
                 </Column>

@@ -6,6 +6,11 @@ export const getCustomers = (params?: {
   limit?: number;
 }) => api.get("/customers", { params });
 
+export const getCustomerOptions = (params?: {
+  search?: string;
+  limit?: number;
+}) => api.get("/customers/options", { params });
+
 export const getCustomer = (id: number) => api.get(`/customers/${id}`);
 
 export const createCustomer = (payload: {

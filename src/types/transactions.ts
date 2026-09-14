@@ -22,3 +22,8 @@ export interface Transaction {
   customer?: Customer;
   items?: TransactionItem[];
 }
+
+export interface CartItem {
+    product: Product,
+    quantity: number,
+}

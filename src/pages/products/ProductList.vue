@@ -7,6 +7,9 @@ import { onMounted, ref } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { deleteProduct } from '@/api/products.api';
 import { RouterLink } from 'vue-router';
+import { usePermission } from '@/composables/usePermission';
+
+const { can } = usePermission()
 
 const productStore = useProductStore();
 const { fetch, setLimit, setPage, nextPage, prevPage, setCategoryFilter } = productStore;
@@ -103,7 +106,7 @@ onMounted(() => {
                 </p>
             </div>
 
-            <Button asChild v-slot="slotProps">
+            <Button asChild v-slot="slotProps" v-if="can('create_products')">
                 <RouterLink :to="{ name: 'products-create' }" :class="slotProps.class">
                     Add Product
                 </RouterLink>
@@ -165,14 +168,15 @@ onMounted(() => {
                 <Column header="Action" style="width: 5rem;">
                     <template #body="{ data }">
                         <div class="flex items-center gap-2">
-                            <RouterLink :to="{ name: 'products-edit', params: { id: data.id } }">
+                            <RouterLink :to="{ name: 'products-edit', params: { id: data.id } }"
+                                v-if="can('edit_products')">
                                 <Button icon="pi pi-pencil" text rounded severity="primary"
                                     class="w-9! h-9! border-surface-200! text-surface-200! hover:text-primary-600! hover:border-primary-500 hover:bg-primary-50! bg-white" />
                             </RouterLink>
 
                             <Button icon="pi pi-trash" text rounded severity="danger"
                                 class="w-9! h-9! border-surface-200! text-surface-200! hover:text-primary-600! hover:border-primary-500 hover:bg-primary-50! bg-white"
-                                @click="confirmDelete(data.id)" />
+                                @click="confirmDelete(data.id)" v-if="can('delete_products')" />
                         </div>
                     </template>
                 </Column>

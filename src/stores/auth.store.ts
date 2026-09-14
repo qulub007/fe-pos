@@ -9,6 +9,19 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: !!localStorage.getItem("token"),
   }),
 
+  getters: {
+    hasPermission: (state) => (permission: string): boolean => {
+        return state.user?.permissions?.includes(permission) ?? false
+    },
+    hasRole: (state) => (role:string): boolean => {
+        return state.user?.roles.includes(role) ?? false
+    },
+    hasAnyPermission: (state)=> (permissions: string[]): boolean => {
+        return permissions.some(p => state.user?.permissions?.includes(p) ?? false)
+    }
+
+  },
+
   actions: {
     async login(email: string, password: string) {
       this.loading = true;
@@ -27,6 +40,7 @@ export const useAuthStore = defineStore("auth", {
       const res = await meApi();
 
       this.user = res.data.data;
+
     },
 
     async logout() {

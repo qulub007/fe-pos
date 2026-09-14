@@ -59,9 +59,6 @@ onMounted(() => {
                 <h1 class="text-2xl font-semibold text-surface-900 mb-1">
                     Transaction Detail
                 </h1>
-                <p class="text-surface-500 text-sm mt-2">
-                    Code: <span class="font-semibold text-green-600">{{ transaction?.code ?? '-' }}</span>
-                </p>
             </div>
 
             <Button asChild v-slot="slotProps">
@@ -77,6 +74,30 @@ onMounted(() => {
         </div>
 
         <div v-else-if="transaction" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-3 bg-white rounded-2xl border border-surface-200 p-6">
+                <h2 class="text-lg font-bold text-surface-900 mb-6">Transaction Information</h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <span class="text-surface-500 text-sm">Transaction Code</span>
+                        <span class="font-semibold text-green-600">{{ transaction.code ?? '-' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-surface-500 text-sm">Customer</span>
+                        <span class="font-semibold text-surface-900">{{ transaction.customer?.name ?? '-' }}</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-surface-500 text-sm">Date</span>
+                        <span class="font-semibold text-surface-900">{{ formatDate(transaction.created_at)
+                        }}</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <span class="text-surface-500 text-sm">Total</span>
+                        <span class="font-bold text-green-600">{{ formatCurrency(transaction.total) }}</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Left Side: Items -->
             <div class="lg:col-span-2 flex flex-col gap-6">
                 <div class="bg-white rounded-2xl border border-surface-200 overflow-hidden">
